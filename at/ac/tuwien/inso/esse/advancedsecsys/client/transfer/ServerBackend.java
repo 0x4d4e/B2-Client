@@ -8,20 +8,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.logging.Logger;
+
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.security.auth.x500.X500Principal;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import at.ac.tuwien.inso.esse.advancedsecsys.client.IServerBackend;
 import at.ac.tuwien.inso.esse.advancedsecsys.client.dto.Entry;
@@ -32,7 +31,6 @@ public class ServerBackend
 {
   private static SecureRandom secureRandom;
   private static SSLContext sslContext;
-  private Logger logger = Logger.getLogger("ESSE");
   private PrintWriter pWriter;
   private BufferedReader reader;
   private SSLSocket s;
@@ -70,15 +68,16 @@ public class ServerBackend
           return null;
         }
       };
-      localKeyStore = KeyStore.getInstance("BKS");
+      localKeyStore = KeyStore.getInstance("BKS", BouncyCastleProvider.PROVIDER_NAME);
       localInputStream = new FileInputStream("androidplatform.bks");
     }
     try
     {
       localKeyStore.load(localInputStream, "123456".toCharArray());
+      
       localInputStream.close();
       //String algo = KeyManagerFactory.getDefaultAlgorithm();
-      KeyManagerFactory localKeyManagerFactory = KeyManagerFactory.getInstance("X509");
+      KeyManagerFactory localKeyManagerFactory = KeyManagerFactory.getInstance("SunX509");
       localKeyManagerFactory.init(localKeyStore, "password".toCharArray());
       if (secureRandom == null)
         secureRandom = SecureRandom.getInstance("SHA1PRNG");
@@ -89,7 +88,7 @@ public class ServerBackend
       return;
     } catch (Exception e) {
     	System.out.println("Exception: " + e);
-    	e.printStackTrace();
+    	throw e;
     }
     finally
     {
