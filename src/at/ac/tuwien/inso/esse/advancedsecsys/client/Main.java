@@ -9,6 +9,7 @@ import at.ac.tuwien.inso.esse.advancedsecsys.client.dto.Entry;
 import at.ac.tuwien.inso.esse.advancedsecsys.client.transfer.ServerBackend;
 
 public class Main {
+	private static final String AUTHKEY = "b2c22c650";
 
 	public static void main(String[] args) {
 		Security.addProvider(new BouncyCastleProvider());
@@ -16,10 +17,10 @@ public class Main {
 		ServerBackend localServerBackend = new ServerBackend();
 		try {
 			localServerBackend.connect("127.0.0.1", 8080);
-			List<Entry> entries = (List<Entry>) localServerBackend.queryForName("", "sdfsdf");
+			List<Entry> entries = (List<Entry>) localServerBackend.queryForName("", AUTHKEY);
 			if ((entries != null) && (entries.size() > 0)) {
 				for (Entry e : entries) {
-					System.out.println(e.toString());
+					System.out.println(e.getName());
 				}
 			}
 			else {
