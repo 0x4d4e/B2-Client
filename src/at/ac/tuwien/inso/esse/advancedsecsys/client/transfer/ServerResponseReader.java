@@ -25,7 +25,7 @@ public class ServerResponseReader
 				if (!line.startsWith("<query:"))
 					continue;
 				String[] arr = line.substring("<query".length()).split(" ");
-				localArrayList.add(new Entry(Utility.b64d(arr[0]), Utility.b64d(arr[1])));
+				localArrayList.add(new Entry(Utility.b64d(arr[0]), arr.length > 1 ? Utility.b64d(arr[1]) : null));
 				continue;
 			}
 			i = 1;
